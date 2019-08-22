@@ -33,10 +33,11 @@
         :key='index + "p"'
         @click='handleSelPrevD(monthDays[prevM] - prevLD[thisW] + item)'>{{monthDays[prevM] - prevLD[thisW] + item}}</span>
       <span class="thisMD sel-span"
-        :class='{"current": showSelected(index + 1)  }'
+        :class='{"current": showSelected(index + 1), "range": showRange(index)  }'
         v-for='(item, index) in thisMDLen'
         :key='index + "c"'
-        @click='handleSelCurD(index + 1)'>{{index + 1}}</span>
+        @click='handleSelCurD(index + 1)'
+        @mouseenter="handleMouseEnter(index + 1)">{{index + 1}}</span>
       <span class="nextMD sel-span"
         v-for='(item, index) in nextMDLen'
         :key='index + "n"'
@@ -67,12 +68,28 @@ export default {
       type: Boolean,
       default: true,
     },
+    curSel: {
+      type: Object,
+    },
+    selMode: {
+      type: String,
+      default: 'singleSel',
+    },
   },
   created() {
     this.selDayList = this.selList.map(item => {
       item.month = item.month - 1
       return item
     })
+    if (this.curSel) {
+      this.selDate = new Date(this.curSel.year, this.curSel.month - 1)
+      this.selDay = new Date(this.curSel.year, this.curSel.month - 1, this.curSel.day)
+    }
+
+    if (this.selMode == 'rangeSel') {
+      this.selDay = ''
+      this.selDayList = []
+    }
   },
   data() {
     return {
@@ -83,7 +100,10 @@ export default {
       selDay: new Date(),
       selDayList: [],
       showSelYear: false,
-      sSel: this.singleSel,
+      rangeDayList: [],
+      rangeStartD: '',
+      rangeEndD: '',
+      mouseEnterActive: false,
     }
   },
   computed: {
@@ -101,7 +121,28 @@ export default {
     },
     thisD() {
       if (this.selDay) {
-        this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+        if (this.selMode == 'mutiSel') {
+          this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+        }
+        if (this.selMode == 'rangeSel') {
+          switch (this.selDayList.length) {
+            case 0:
+              this.mouseEnterActive = true
+
+              this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+              break
+            case 1:
+              this.mouseEnterActive = false
+
+              this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+              break
+            case 2:
+              this.mouseEnterActive = true
+              this.selDayList = []
+              this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+              break
+          }
+        }
         return this.selDay.getDate()
       } else {
         return ''
@@ -145,15 +186,46 @@ export default {
     handleSelCurD(index) {
       let _that = this
       this.selDay = new Date(this.thisY, this.thisM, index)
-      this.selDayList = this.selDayList.filter(item => {
-        // debugger
-        if (item.year == _that.thisY && item.month == _that.thisM && item.day == _that.thisD) {
-          this.selDay = ''
-          return false
+
+      // 多选模式
+      if (this.selMode == 'mutiSel') {
+        this.selDayList = this.selDayList.filter(item => {
+          // debugger
+          if (item.year == _that.thisY && item.month == _that.thisM && item.day == _that.thisD) {
+            this.selDay = ''
+            return false
+          }
+          return true
+        })
+      }
+
+      // 范围选择模式
+      if (this.selMode == 'rangeSel') {
+        console.log(this.rangeStartD)
+        console.log(this.rangeEndD)
+        switch (this.selDayList.length) {
+          case 0:
+            this.rangeStartD = this.selDay.getDate() - 1
+            break
+          case 1:
+            this.rangeEndD = this.selDay.getDate() - 1
+            break
+          case 2:
+            this.rangeStartD = ''
+            this.rangeEndD = ''
+            this.rangeStartD = this.selDay.getDate() - 1
+            break
         }
-        return true
-      })
-      console.log(this.selDayList)
+        // this.rangeStartD = index - 1
+        this.selDayList = this.selDayList.filter(item => {
+          // debugger
+          if (item.year == _that.thisY && item.month == _that.thisM && item.day == _that.thisD) {
+            this.selDay = ''
+            return false
+          }
+          return true
+        })
+      }
     },
 
     // 单选下个月的日期
@@ -176,6 +248,7 @@ export default {
       this.selDate = new Date(year, this.thisM)
     },
 
+    // 控制选中状态的展示
     showSelected(index) {
       var sel = false
       // console.log(this.selDayList)
@@ -184,13 +257,33 @@ export default {
           sel = true
         }
       })
-
+      if (this.selMode == 'singleSel') {
+        sel = false
+      }
       return (this.thisD == index && this.isCurM && this.isCurY) || sel
     },
 
     clearAllSel() {
       this.selDayList = []
       this.selDay = ''
+    },
+    // 添加鼠标移入事件
+    handleMouseEnter(index) {
+      if (this.mouseEnterActive) {
+        this.rangeEndD = index - 1
+      }
+      // console.log('mouseenter', this.mouseEnterActive, index)
+    },
+
+    showRange(index) {
+      // debugger
+
+      let startIndex = Math.min(this.rangeEndD, this.rangeStartD)
+      let endIndex = Math.max(this.rangeEndD, this.rangeStartD)
+      return (
+        startIndex && endIndex && index < endIndex && index > startIndex
+        // (this.selDayList.length == 2 && index >= this.selDayList[0].day && index < this.selDayList[1].day)
+      )
     },
   },
 }
@@ -245,6 +338,10 @@ export default {
       flex: 1 0 19%;
     }
   }
+}
+
+.range {
+  background: #ccc;
 }
 
 // theme

@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <calendar :selList="list"
-      :singleSel='true' />
+      :curSel='curSel'
+      :selMode='selMode' />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ export default {
   },
   data() {
     return {
+      selMode: 'rangeSel', // singleSel, mutiSel, rangeSel
       list: [
         {
           year: '2019',
@@ -32,6 +34,11 @@ export default {
           day: '10',
         },
       ],
+      curSel: {
+        year: '2019',
+        month: '8',
+        day: '23',
+      },
     }
   },
 }
