@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <calendar />
+    <calendar :selList="list"
+      :singleSel='true' />
   </div>
 </template>
 
@@ -11,6 +12,27 @@ export default {
   name: 'app',
   components: {
     Calendar,
+  },
+  data() {
+    return {
+      list: [
+        {
+          year: '2019',
+          month: '8',
+          day: '21',
+        },
+        {
+          year: '2019',
+          month: '8',
+          day: '20',
+        },
+        {
+          year: '2019',
+          month: '7',
+          day: '10',
+        },
+      ],
+    }
   },
 }
 </script>

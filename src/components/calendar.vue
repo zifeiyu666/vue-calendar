@@ -42,6 +42,9 @@
         :key='index + "n"'
         @click='handleSelnextD(index + 1)'>{{index + 1}}</span>
     </div>
+    <div class="btns">
+      <button @click='clearAllSel'>清除选择</button>
+    </div>
   </div>
 </template>
 
@@ -54,6 +57,22 @@ export default {
       type: String,
       default: 'red',
     },
+    selList: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    singleSel: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  created() {
+    this.selDayList = this.selList.map(item => {
+      item.month = item.month - 1
+      return item
+    })
   },
   data() {
     return {
@@ -64,14 +83,15 @@ export default {
       selDay: new Date(),
       selDayList: [],
       showSelYear: false,
+      sSel: this.singleSel,
     }
   },
   computed: {
     isCurM() {
-      return this.thisM == this.selDay.getMonth()
+      return this.selDay ? this.thisM == this.selDay.getMonth() : false
     },
     isCurY() {
-      return this.thisY == this.selDay.getFullYear()
+      return this.selDay ? this.thisY == this.selDay.getFullYear() : false
     },
     thisY() {
       return this.selDate.getFullYear()
@@ -80,8 +100,12 @@ export default {
       return this.selDate.getMonth()
     },
     thisD() {
-      this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
-      return this.selDay.getDate()
+      if (this.selDay) {
+        this.selDayList.push({ year: this.selDay.getFullYear(), month: this.selDay.getMonth(), day: this.selDay.getDate() })
+        return this.selDay.getDate()
+      } else {
+        return ''
+      }
     },
     prevM() {
       return this.thisM - 1 < 0 ? 11 : this.thisM - 1
@@ -117,9 +141,19 @@ export default {
       var curM = this.thisM - 1 < 0 ? 11 : this.thisM - 1
       this.selDate = new Date(this.thisY, curM)
     },
-    // 单选当前月日期
+    // 单选、多选当前月日期
     handleSelCurD(index) {
+      let _that = this
       this.selDay = new Date(this.thisY, this.thisM, index)
+      this.selDayList = this.selDayList.filter(item => {
+        // debugger
+        if (item.year == _that.thisY && item.month == _that.thisM && item.day == _that.thisD) {
+          this.selDay = ''
+          return false
+        }
+        return true
+      })
+      console.log(this.selDayList)
     },
 
     // 单选下个月的日期
@@ -143,7 +177,20 @@ export default {
     },
 
     showSelected(index) {
-      return this.thisD == index && this.isCurM && this.isCurY
+      var sel = false
+      // console.log(this.selDayList)
+      this.selDayList.forEach(item => {
+        if (item.day == index && item.month == this.thisM && item.year == this.thisY) {
+          sel = true
+        }
+      })
+
+      return (this.thisD == index && this.isCurM && this.isCurY) || sel
+    },
+
+    clearAllSel() {
+      this.selDayList = []
+      this.selDay = ''
     },
   },
 }
