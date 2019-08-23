@@ -230,14 +230,14 @@ export default {
 
     // 单选下个月的日期
     handleSelPrevD(index) {
-      this.selDay = new Date(this.thisY, this.prevM, index)
-      this.handlePrevM()
+      // this.selDay = new Date(this.thisY, this.prevM, index)
+      // this.handlePrevM()
     },
 
     // 单选上个月的日期
     handleSelnextD(index) {
-      this.selDay = new Date(this.thisY, this.nextM, index)
-      this.handleNextM()
+      // this.selDay = new Date(this.thisY, this.nextM, index)
+      // this.handleNextM()
     },
 
     toggleSelYear() {
