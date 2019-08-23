@@ -1,29 +1,34 @@
 # vue-calendar
+## 简介
 
-## Project setup
-```
-npm install
-```
+因为项目中需要实现一个vue的日历效果，在社区搜寻一番，并没有找到贴合实际需要功能完善且足够轻量，可扩展性强的组件；
+#### 社区目前大概分为以下几种日历组件
+1. 像element-ui，ant-ui之类的大而全的框架中的日历组件，他们大多统一于各自框架风格，定制难度高，且如果项目没有使用类似的ui框架，引入成本高。
+2. full-calendar, v-calendar之类配置过多，不够轻量的库。
+3. github中开发者贡献的比较杂的框架，要么功能不全，要么扩展定制性不够。
 
-### Compiles and hot-reloads for development
-```
+基于此，想要自己动手开发一个可自定义配置，足够轻量请，又功能完备的vue日历组件，小白作品，欢迎大神指正。
+## 功能
+
+1. 实现基本的年月日展示
+2. 可显示阴历，重要节日
+3. 可实现单选日期/时间
+4. 可实现多选日期/时间
+5. 可实现日期/时间的范围选择
+6. 可实现输入框点击弹出时间/日期的选择页面
+7. 可实现PC端日历的日程表功能
+8. 双击空白添加日程
+9. 日程可拖拽，可拉伸，同一日期日程可重叠
+10. 可自定义主题，并预设几套主题
+   
+## 项目介绍
+#### 项目启动： 
+npm install  
 npm run serve
-```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### 项目阶段
+可以根据项目的提交历史，一步一步从零开始实现一个日历组件；
+每一个commit都是根据功能提交;  
+新添加功能为：feat前缀
+修改功能为: fix前缀
+   

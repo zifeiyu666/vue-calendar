@@ -27,7 +27,8 @@
         v-for='(item, index) in weeks'
         :key='index'>{{item}}</span>
     </div>
-    <div class="days">
+    <div class="days"
+      @mouseleave="handleMouseLeave">
       <span class="prevMD sel-span"
         v-for='(item, index) in prevMDLen'
         :key='index + "p"'
@@ -269,8 +270,18 @@ export default {
     },
     // 添加鼠标移入事件
     handleMouseEnter(index) {
+      if (this.selDayList.length != 2) {
+        this.mouseEnterActive = true
+      }
       if (this.mouseEnterActive) {
         this.rangeEndD = index - 1
+      }
+      // console.log('mouseenter', this.mouseEnterActive, index)
+    },
+    // 添加鼠标移出事件
+    handleMouseLeave(index) {
+      if (this.selDayList.length != 2) {
+        this.mouseEnterActive = false
       }
       // console.log('mouseenter', this.mouseEnterActive, index)
     },
@@ -281,7 +292,7 @@ export default {
       let startIndex = Math.min(this.rangeEndD, this.rangeStartD)
       let endIndex = Math.max(this.rangeEndD, this.rangeStartD)
       return (
-        startIndex && endIndex && index < endIndex && index > startIndex
+        startIndex && endIndex && index < endIndex && index > startIndex && (this.mouseEnterActive || this.selDayList.length == 2)
         // (this.selDayList.length == 2 && index >= this.selDayList[0].day && index < this.selDayList[1].day)
       )
     },
