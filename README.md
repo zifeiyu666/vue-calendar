@@ -1,4 +1,7 @@
 # vue-calendar
+
+DEMO地址： https://zifeiyu666.github.io/vue-calendar/
+
 ## 简介
 
 因为项目中需要实现一个vue的日历效果，在社区搜寻一番，并没有找到贴合实际需要功能完善且足够轻量，可扩展性强的组件；
