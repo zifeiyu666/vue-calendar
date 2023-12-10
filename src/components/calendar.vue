@@ -162,13 +162,21 @@ export default {
       return this.thisM + 1
     },
     thisMDLen() {
-      return this.monthDays[this.thisRM]
+      //return this.monthDays[this.thisRM]
+      // 原： return this.monthDays[this.thisRM]  注：这里有错误，导致每月显示天数会与实际情况对不上。
+      //应改为
+      return this.monthDays[this.thisRM - 1]
     },
     prevMDLen() {
       return this.prevLD[this.thisW]
     },
     nextMDLen() {
-      return 42 - this.thisMDLen - this.prevMDLen
+      //return 42 - this.thisMDLen - this.prevMDLen
+       if (this.thisMDLen !== undefined && this.prevMDLen !== undefined) {
+        return 42 - this.thisMDLen - this.prevMDLen;
+      } else {
+        return 0; // 或者其他适当的处理
+      }
     },
   },
   methods: {
